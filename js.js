@@ -1,65 +1,65 @@
-const booksDiv = document.querySelector(".books");
-const fetchAddress = "https://wjs-api.vercel.app/api/books";
+const booksContainer = document.querySelector(".books");
+const apiEndpoint = "https://wjs-api.vercel.app/api/books";
 
-const getInfo = async (fetchAddress) => {
-    const response = await fetch(fetchAddress);
+const fetchData = async (endpoint) => {
+    const response = await fetch(endpoint);
     return await response.json();
 };
 
-const createElement = (tag, text, className) => {
+const createHTMLElement = (tag, text, className) => {
     const element = document.createElement(tag);
     if (text) element.innerText = text;
     if (className) element.classList.add(className);
     return element;
 };
 
-const createButton = (text, onClick) => {
-    const button = createElement("button", text);
+const createButtonElement = (text, onClick) => {
+    const button = createHTMLElement("button", text);
     button.addEventListener("click", onClick);
     return button;
 };
 
-const loadSite = async (fetchAddress) => {
-    const data = await getInfo(fetchAddress);
+const loadBooks = async (endpoint) => {
+    const data = await fetchData(endpoint);
 
     data.forEach(item => {
-        const singleBookDiv = createElement("div", null, "singleBook");
+        const singleBookDiv = createHTMLElement("div", null, "singleBook");
 
         singleBookDiv.append(
-            createElement("span", item.title),
-            createElement("span", `ID ${item._id}`),
-            createButton("Click me for details!", () => loadDetail(`https://wjs-api.vercel.app/api/books/${item._id}`))
+            createHTMLElement("span", item.title),
+            createHTMLElement("span", `ID ${item._id}`),
+            createButtonElement("Click me for details!", () => loadBookDetail(`${apiEndpoint}/${item._id}`))
         );
 
-        booksDiv.append(singleBookDiv);
+        booksContainer.append(singleBookDiv);
     });
 };
 
-const loadDetail = async (fetchAddress) => {
-    const book = await getInfo(fetchAddress);
+const loadBookDetail = async (endpoint) => {
+    const book = await fetchData(endpoint);
 
-    const singleBookDiv = createElement("div", null, "singleBook");
+    const singleBookDiv = createHTMLElement("div", null, "singleBook");
 
     singleBookDiv.append(
-        createElement("span", book.title),
-        createElement("span", `ID: ${book._id}`),
-        createElement("span", `Page Count: ${book.pageCount}`),
-        createElement("span", `Status: ${book.status}`),
-        createButton("Go Back", () => loadSite("https://wjs-api.vercel.app/api/books"))
+        createHTMLElement("span", book.title),
+        createHTMLElement("span", `ID: ${book._id}`),
+        createHTMLElement("span", `Page Count: ${book.pageCount}`),
+        createHTMLElement("span", `Status: ${book.status}`),
+        createButtonElement("Go Back", () => loadBooks(apiEndpoint))
     );
 
-    booksDiv.innerHTML = "";
-    booksDiv.append(singleBookDiv);
+    booksContainer.innerHTML = "";
+    booksContainer.append(singleBookDiv);
 };
 
-const handleSearchKeyPress = (e) => {
+const handleSearchEnter = (e) => {
     if (e.key === "Enter") {
-        booksDiv.innerHTML = "";
-        loadSite(`https://wjs-api.vercel.app/api/books?search=${searchInput.value}`);
+        booksContainer.innerHTML = "";
+        loadBooks(`${apiEndpoint}?search=${searchInput.value}`);
     }
 };
 
 const searchInput = document.querySelector(".search");
-searchInput.addEventListener("keypress", handleSearchKeyPress);
+searchInput.addEventListener("keypress", handleSearchEnter);
 
-loadSite(fetchAddress);
+loadBooks(apiEndpoint);
