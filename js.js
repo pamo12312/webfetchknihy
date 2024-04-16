@@ -48,6 +48,7 @@ const loadBookDetail = async (endpoint) => {
         createButtonElement("Go Back", () => loadBooks(apiEndpoint))
     );
 
+
     booksContainer.innerHTML = "";
     booksContainer.append(singleBookDiv);
 };
